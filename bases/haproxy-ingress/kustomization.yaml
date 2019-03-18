@@ -9,6 +9,7 @@ commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
 resources:
+- letsencrypt-certs.yaml
 - default-backend-deployment.yaml
 - default-backend-service.yaml
 - haproxy-exporter-service.yaml
