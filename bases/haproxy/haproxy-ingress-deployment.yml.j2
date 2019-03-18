@@ -1,0 +1,198 @@
+#jinja2: trim_blocks: False, lstrip_blocks: False
+apiVersion: {{deployment_apiversion}}
+kind: Deployment
+metadata:
+  labels:
+    run: haproxy-ingress
+    app: haproxy-ingress
+    tier: ingress
+  name: haproxy-ingress
+  namespace: ingress-controller
+spec:
+  replicas: {{haproxy_ingress_replicas}}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      run: haproxy-ingress
+      tier: ingress
+  template:
+    metadata:
+      labels:
+        run: haproxy-ingress
+        tier: ingress
+      annotations:
+        fluentd/config-map-checksum: '{{fluentd_cm_checksum}}'
+    spec:
+      serviceAccountName: ingress-controller
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - haproxy-ingress
+            topologyKey: kubernetes.io/hostname
+      priorityClassName: infra
+      containers:
+        - name: haproxy-ingress
+          image: quay.io/jcmoraisjr/haproxy-ingress:{{ haproxy_image_version }}
+          args:
+          - --default-backend-service=$(POD_NAMESPACE)/ingress-default-backend
+          - --default-ssl-certificate=$(POD_NAMESPACE)/star-letsencrypt-cert
+          - --configmap=$(POD_NAMESPACE)/haproxy-ingress
+          - --allow-cross-namespace=true
+          readinessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /healthz
+              port: 10253
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /healthz
+              port: 10253
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          ports:
+          - name: http
+            containerPort: 80
+          - name: https
+            containerPort: 443
+          - name: stat
+            containerPort: 1936
+          - name: healthz
+            containerPort: 10253
+          resources:
+            requests:
+              cpu: {{ haproxy_requests_cpu }}
+              memory: {{ haproxy_requests_memory }}
+            limits:
+              cpu: {{ haproxy_limits_cpu }}
+              memory: {{ haproxy_limits_memory }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        - name: haproxy-exporter
+          image: quay.io/prometheus/haproxy-exporter:v{{ haproxy_exporter_version }}
+          args:
+          - --haproxy.scrape-uri=http://localhost:1936/;csv
+          ports:
+          - name: metrics
+            containerPort: 9101
+          securityContext:
+            runAsUser: 65534
+          readinessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /
+              port: 9101
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 9101
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: {{ haproxy_exporter_requests_cpu }}
+              memory: {{ haproxy_exporter_requests_memory }}
+            limits:
+              cpu: {{ haproxy_exporter_limits_cpu }}
+              memory: {{ haproxy_exporter_limits_memory }}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        - image: {{haproxy_fluentd_image}}:{{haproxy_fluentd_image_version}}
+          name: haproxy-fluentd
+          env:
+          - name: FLUENTD_ARGS
+            value: --no-supervisor
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: CLUSTER_NAME
+            value: {{cluster_name}}
+          - name: CLUSTER_ENVIRONMENT
+            value: {{cluster_environment}}
+          resources:
+            requests:
+              cpu: {{haproxy_fluentd_requests_cpu}}
+              memory: {{haproxy_fluentd_requests_memory}}
+              ephemeral-storage: {{haproxy_fluentd_requests_ephemeral}}
+            limits:
+              cpu: {{haproxy_fluentd_limits_cpu}}
+              memory: {{haproxy_fluentd_limits_memory}}
+              ephemeral-storage: {{haproxy_fluentd_limits_ephemeral}}
+          ports:
+            - containerPort: 9001
+            - containerPort: 8888
+            - containerPort: 24231
+          securityContext:
+            runAsUser: 65534
+          readinessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 8888
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+          - name: config-volume
+            mountPath: /etc/fluent/fluent.conf
+            subPath: fluent.conf
+      volumes:
+      - name: config-volume
+        configMap:
+          name: haproxy-fluentd

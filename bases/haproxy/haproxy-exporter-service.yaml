@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: haproxy-exporter
+  name: haproxy-exporter
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 9101
+    protocol: TCP
+    targetPort: 9101
+    name: metrics
+  - port: 24231
+    protocol: TCP
+    targetPort: 24231
+    name: fluentmetrics
+  selector:
+    run: haproxy-ingress

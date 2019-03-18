@@ -1,0 +1,52 @@
+apiVersion: "apps/v1"
+kind: Deployment
+metadata:
+  labels:
+    run: ingress-default-backend
+    app: ingress-default-backend
+  name: ingress-default-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: ingress-default-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: ingress-default-backend
+        tier: frontend
+    spec:
+      containers:
+      - image: mintel/404-server:v1.4
+        imagePullPolicy: IfNotPresent
+        name: ingress-default-backend
+        livenessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        securityContext:
+          runAsUser: 65534
+        resources:
+          limits:
+            cpu: 10m
+            memory: 20Mi
+          requests:
+            cpu: 10m
+            memory: 20Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-ingress
+data:
+  forwardfor: add
+  ssl-options: no-sslv3 no-tlsv10 no-tls-tickets
+  #ssl-dh-param: "ingress-controller/ingress-dh-param"
+  ssl-dh-default-max-size: "2048"
+  max-connections: "10000"
+  syslog-endpoint: localhost:9001

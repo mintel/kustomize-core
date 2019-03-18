@@ -1,0 +1,114 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-fluentd
+data:
+  fluent.conf: |
+    # Do not collect fluentd's own logs to avoid infinite loops.
+    <match fluent.**>
+      @type null
+    </match>
+
+    <source>
+      @type http_healthcheck
+      port 8888
+      bind 0.0.0.0
+    </source>
+
+    # Input and parse HAProxy syslog.
+    <source>
+      @type syslog
+      tag haproxy_input
+      bind 127.0.0.1
+      port 9001
+      <parse>
+        @type regexp
+        ## Matches HAProxy 1.8 rfc5424 HTTP logs, with a catch-all for other log types.
+        expression /^\d{1,2} (?<syslog_time>[^ ]+) (?<syslog_host>[^ ]+) (?<ps>\w+) (?<pid>\d+) ([^ ]+) ((\[(.*)\]|[^ ])) ((?<client_ip>[\w\.]+):(?<client_port>\d+) \[(?<req_date>.+)\] (?<frontend>[\w\~-]+) (?<backend>[\w-]+)\/(?<backend_server>[^ ]+) (?<tr_receive_time>[^\/]+)\/(?<tw_queue_time>[^\/]+)\/(?<tc_connect_time>[^\/]+)\/(?<tr_resp_time>[^\/]+)\/(?<ta_active_time>[^\/]+) (?<status_code>[-\d]+) (?<bytes_read>\d+) (?<req_cookie>[^ ]+) (?<res_cookie>[^ ]+) (?<term_state>[\w-]+) (?<actconn>\d+)\/(?<feconn>\d+)\/(?<beconn>\d+)\/(?<srv_conn>\d+)\/(?<retries>\d+) (?<srv_queue>\d+)\/(?<backend_queue>\d+) \{?(?<req_headers>[^}]*)\}? ?\{?(?<res_headers>[^}]*)\}? ?"(?<request>[^"]*)"|(?<message>.+))/
+        types actconn:integer,backend:string,backend_queue:integer,beconn:integer,backend_server:string,bytes_read:integer,client_ip:string,client_port:integer,feconn:integer,frontend:string,message:string,pid:integer,ps:string,req_date:string,req_headers:string,req_cookie:string,request:string,res_headers:string,retries:string,res_cookie:string,srv_conn:integer,srv_queue:integer,status_code:integer,syslog_time:string,term_state:string,tc_connect_time:integer,tr_resp_time:integer,tr_receive_time:integer,ta_active_time:integer,tw_queue_time:integer
+        time_key syslog_time
+        time_format '%Y-%m-%dT%H:%M:%S+%z'
+      </parse>
+    </source>
+
+    # Tag our log types.
+    <match haproxy_input.**>
+      @type rewrite_tag_filter
+      <rule>
+        key     frontend
+        pattern .
+        tag haproxy.http
+      </rule>
+      <rule>
+        key     message
+        pattern .
+        tag haproxy.general
+      </rule>
+    </match>
+
+    # Setup the Prometheus plugin.
+    <source>
+      @type prometheus
+      bind 0.0.0.0
+      port 24231
+      metrics_path /metrics
+    </source>
+
+    # Following Prometheus best practice by converting to base unit.
+    <filter haproxy.http>
+      @type record_modifier
+      <record>
+        ta_active_time_seconds ${record["ta_active_time"].to_f / 1000}
+      </record>
+      <record>
+        tr_resp_time_seconds ${record["tr_resp_time"].to_f / 1000}
+      </record>
+      <record>
+        tw_queue_time_seconds ${record["tw_queue_time"].to_f / 1000}
+      </record>
+    </filter>
+
+    ## Create the histogram.
+    <filter haproxy.http>
+      @type prometheus
+      <metric>
+        name http_backend_request_duration_seconds
+        type histogram
+        desc A histogram of the request duration (Ta).
+        key ta_active_time_seconds
+        buckets 0.01, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 5, 10
+        <labels>
+          tag ${tag}
+          backend ${backend}
+          server ${backend_server}
+          pod_name "#{ENV['POD_NAME']}"
+        </labels>
+      </metric>
+      <metric>
+        name http_backend_response_wait_seconds
+        type histogram
+        desc A histogram of the time spent waiting on the backend response (Tr).
+        key tr_resp_time_seconds
+        buckets 0.01, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 5, 10
+        <labels>
+          tag ${tag}
+          backend ${backend}
+          server ${backend_server}
+          pod_name "#{ENV['POD_NAME']}"
+        </labels>
+      </metric>
+      <metric>
+        name http_backend_queue_time_seconds
+        type histogram
+        desc A histogram of the time requests spend in the queue (Tw).
+        key tw_queue_time_seconds
+        buckets 0.01, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 5, 10
+        <labels>
+          tag ${tag}
+          backend ${backend}
+          server ${backend_server}
+          pod_name "#{ENV['POD_NAME']}"
+        </labels>
+      </metric>
+    </filter>

@@ -1,0 +1,19 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+resources:
+- default-backend-deployment.yaml
+- default-backend-service.yaml
+- haproxy-exporter-service.yaml
+- haproxy-fluentd-configmap.yaml
+- haproxy-ingress-clusterrolebinding.yaml
+- haproxy-ingress-clusterrole.yaml
+- haproxy-ingress-configmap.yaml
+- haproxy-ingress-rolebinding.yaml
+- haproxy-ingress-role.yaml
+- haproxy-ingress-serviceaccount.yaml
+- haproxy-ingress-service.yaml
+- haproxy-network-policy.yaml
