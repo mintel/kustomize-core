@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: haproxy
+spec:
+  rules:
+  - host: $(DEPLOYMENT_NAME).$(DOMAIN)
+    http:
+      paths:
+      - backend:
+          serviceName: app
+          servicePort: 8000
+  tls:
+  - hosts:
+     - $(DEPLOYMENT_NAME).$(DOMAIN)

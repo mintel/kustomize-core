@@ -1,0 +1,20 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: app
+spec:
+  endpoints:
+  - interval: 30s
+    port: http
+  job-label: app
+  namespaceSelector:
+    matchNames:
+    - name
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: name
+  targetLabels:
+  - app.kubernetes.io/owner
+  - mintel.com/env
+  - mintel.com/ignore_alerts

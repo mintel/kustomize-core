@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  template:
+    spec:
+      containers:
+      - args:
+        - --verbose=true
+        - --listen=:6001
+        - --upstream-url=http://127.0.0.1:8000
+        - --discovery-url=https://dex.svc.$(DOMAIN)/.well-known/openid-configuration
+        - --client-id=grafana
+        - --skip-upstream-tls-verify
+        - --redirection-url=https://$(DEPLOYMENT_NAME).$(DOMAIN)
+        - --secure-cookie=false
+        - --client-secret=ENV_CLIENT_SECRET
+        - --enable-authorization-header=false
+        - --skip-openid-provider-tls-verify
+        - --add-claims=groups
+        - --scopes=groups
+        - --add-claims=groups
+        - --resources=uri=/*
+        image: quay.io/gambol99/keycloak-proxy:v2.2.0
+        imagePullPolicy: IfNotPresent
+        name: auth-proxy
+        ports:
+        - containerPort: 6001
+          name: auth-proxy
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            ephemeral-storage: 1Gi
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            ephemeral-storage: 256Mi
+            memory: 64Mi

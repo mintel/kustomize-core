@@ -1,0 +1,10 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+bases:
+- ../web-app
+ 
+patches:
+- patch-ingress-add-auth.yaml
+  #- patch-deploy-add-auth.yaml
+- ../patches/patch-deploy-add-auth.yaml

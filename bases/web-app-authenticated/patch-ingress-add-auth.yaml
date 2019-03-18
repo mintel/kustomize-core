@@ -1,0 +1,9 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app
+  annotations:
+    mintel.com/dex-k8s-ingress-watcher-client-id: clientid
+    mintel.com/dex-k8s-ingress-watcher-secret: client-secret
+    mintel.com/dex-k8s-ingress-watcher-redirect-uri: https://$(DEPLOYMENT_NAME).$(DOMAIN)/oauth/callback
