@@ -5,6 +5,6 @@ varReference:
   kind: Service
 - path: spec/commonName
   kind: Certificate
-#- path: spec/acme/config/dns01/domains/value
-#  kind: Certificate
+- path: spec/acme/config/domains
+  kind: Certificate
 

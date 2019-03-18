@@ -6,11 +6,11 @@ spec:
   acme:
     config:
     - dns01:
-        provider: $(DNS_LETSENCRYPT_PROVIDER)
+        provider: __PLACEHOLDER_PATCH__
       domains:
       - '*.$(DOMAIN)'
   commonName: '*.$(DOMAIN)'
   issuerRef:
-    name: $(DNS_LETSENCRYPT_KEYNAME)
+    name: __PLACEHOLDER_PATCH__
   secretName: star-letsencrypt-cert
 
