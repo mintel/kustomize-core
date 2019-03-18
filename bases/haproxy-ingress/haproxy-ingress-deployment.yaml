@@ -35,7 +35,6 @@ spec:
                 values:
                 - haproxy-ingress
             topologyKey: kubernetes.io/hostname
-      priorityClassName: infra
       containers:
         - name: haproxy-ingress
           image: quay.io/jcmoraisjr/haproxy-ingress:v0.7-beta.8
