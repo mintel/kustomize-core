@@ -1,4 +1,4 @@
-#jinja2: trim_blocks: False, lstrip_blocks: False
+---
 apiVersion: "rbac.authorization.k8s.io/v1"
 kind: RoleBinding
 metadata:

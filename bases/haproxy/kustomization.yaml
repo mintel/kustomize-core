@@ -1,3 +1,4 @@
+---
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 
@@ -15,5 +16,6 @@ resources:
 - haproxy-ingress-rolebinding.yaml
 - haproxy-ingress-role.yaml
 - haproxy-ingress-serviceaccount.yaml
+- haproxy-ingress-deployment.yaml
 - haproxy-ingress-service.yaml
 - haproxy-network-policy.yaml
