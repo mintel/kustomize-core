@@ -3,8 +3,8 @@
 varReference:
 - path: metadata/annotations/external-dns.alpha.kubernetes.io\/hostname
   kind: Service
-#- path: spec/commonName
-#  kind: Certificate
+- path: spec/commonName
+  kind: Certificate
 #- path: spec/acme/config/dns01/domains/value
 #  kind: Certificate
 
