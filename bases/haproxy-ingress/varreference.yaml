@@ -1,0 +1,6 @@
+---
+
+varReference:
+- path: metadata/annotations/external-dns.alpha.kubernetes.io\/hostname
+  kind: Service
+

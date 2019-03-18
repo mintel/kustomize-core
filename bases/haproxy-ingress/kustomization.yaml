@@ -2,6 +2,9 @@
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 
+configurations:
+- varreference.yaml
+
 commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
@@ -19,3 +22,18 @@ resources:
 - haproxy-ingress-deployment.yaml
 - haproxy-ingress-service.yaml
 - haproxy-network-policy.yaml
+
+vars:
+- name: DOMAIN
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: cluster-properties
+  fieldref:
+    fieldpath: data.DOMAIN 
+
+
+configMapGenerator:
+- name: cluster-properties 
+  env: properties/cluster.properties
+
