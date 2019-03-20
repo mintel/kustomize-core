@@ -4,12 +4,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 
 configurations:
 - varreference.yaml
-- namereference.yaml
 
 commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
-
-namespace: default
 
 resources:
 - clusterrolebinding-vault-auth.yaml
@@ -26,13 +23,20 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
-- name: SERVICEACCOUNT_NAMESPACE
+- name: VAULT_CRD_NAMESPACE
   objref:
-    kind: ServiceAccount
+    kind: Vault
     name: vault
-    apiVersion: v1
+    apiVersion: vault.banzaicloud.com/v1alpha1
   fieldref:
     fieldpath: metadata.namespace
+- name: VAULTCRD_NAME
+  objref:
+    kind: Vault
+    name: vault
+    apiVersion: vault.banzaicloud.com/v1alpha1
+  fieldref:
+    fieldpath: metadata.name
 - name: VAULT_VERSION
   objref:
     apiVersion: v1

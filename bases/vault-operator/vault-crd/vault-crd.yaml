@@ -42,7 +42,7 @@ spec:
         tls_key_file: /vault/tls/server.key
         tls_min_version: "tls12"
         tls_disable: "false"
-    api_addr: https://vault.$(SERVICEACCOUNT_NAMESPACE).svc.cluster.local:8200
+    api_addr: https://$(VAULTCRD_NAME).$(VAULT_CRD_NAMESPACE).svc.cluster.local:8200
     cluster_name: "vault"
     telemetry:
       statsd_address: localhost:9125
