@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: vault-configurator
+    vault_cr: $(VAULT_CR_LABEL)
+  name: dev-config
+data:
+  vault-config.yml: |
+    policies:
+      - name: allow_super_secrets
+        rules: path "secret/*" {
+          capabilities = ["create", "read", "update", "delete", "list"]
+          }

@@ -1,0 +1,24 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+resources:
+- test-config.yaml
+
+
+vars:
+- name: VAULT_CR_LABEL
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-policies-properties
+  fieldref:
+    fieldpath: data.VAULT_CR_LABEL
+
+configMapGenerator:
+- name: vault-policies-properties 
+  env: properties/policies.properties
+
