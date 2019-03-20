@@ -1,0 +1,15 @@
+---
+
+varReference:
+- path: metadata/name
+  kind: Vault
+- path: spec/serviceAccount
+  kind: Vault
+- path: spec/config/api_addr
+  kind: Vault
+- path: spec/image
+  kind: Vault
+- path: spec/bankVaultsImage
+  kind: Vault
+- path: spec/unsealConfig/kubernetes/secretNamespace
+  kind: Vault

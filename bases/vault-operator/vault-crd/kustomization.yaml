@@ -1,0 +1,54 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+configurations:
+- varreference.yaml
+- namereference.yaml
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+namespace: default
+
+resources:
+- clusterrolebinding-vault-auth.yaml
+- rolebinding-vault-secrets.yaml
+- role-vault-secrets.yaml
+- serviceaccount-vault.yaml
+- vault-crd.yaml
+
+vars:
+- name: SERVICEACCOUNT_NAME
+  objref:
+    kind: ServiceAccount
+    name: vault
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.name
+- name: SERVICEACCOUNT_NAMESPACE
+  objref:
+    kind: ServiceAccount
+    name: vault
+    apiVersion: v1
+  fieldref:
+    fieldpath: metadata.namespace
+- name: VAULT_VERSION
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.VAULT_VERSION
+- name: BANK_VAULTS_VERSION
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.BANK_VAULTS_VERSION
+
+configMapGenerator:
+- name: vault-properties 
+  env: properties/vault.properties
+

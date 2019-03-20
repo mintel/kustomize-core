@@ -1,0 +1,11 @@
+
+nameReference:
+- kind: ServiceAccount
+  version: v1
+  fieldSpecs:
+  - path: spec/serviceAccount
+    kind: Vault
+    group: vault.banzaicloud.com/v1alpha1
+  - path: spec/config/api_addr
+    kind: Vault
+    group: vault.banzaicloud.com/v1alpha1
