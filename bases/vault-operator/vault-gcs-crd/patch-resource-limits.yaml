@@ -1,0 +1,27 @@
+apiVersion: "vault.banzaicloud.com/v1alpha1"
+kind: "Vault"
+metadata:
+  name: "vault"
+spec:
+  resources:
+    vault:
+      requests:
+        memory: "256Mi"
+        cpu: "200m"
+      limits:
+        memory: "2Gi"
+        cpu: "2"
+    bankVaults:
+      requests:
+        memory: "64Mi"
+        cpu: "100m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    prometheusExporter:
+      requests:
+        memory: "64Mi"
+        cpu: "100m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"

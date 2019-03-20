@@ -1,0 +1,56 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+#namespace: vault
+#namePrefix: gcs-
+
+bases:
+- ../vault-crd/
+
+patchesStrategicMerge:
+- patch-size.yaml
+- patch-resource-limits.yaml
+- patch-gcs-ha.yaml
+
+configMapGenerator:
+- name: vault-properties
+  env: properties/vault.properties
+  behavior: merge 
+
+vars:
+- name: VAULT_KEYRING
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.VAULT_KEYRING
+- name: VAULT_KEYNAME
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.VAULT_KEYNAME
+- name: VAULT_KEY_PROJECT
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.VAULT_KEY_PROJECT
+- name: VAULT_KEY_REGION
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.VAULT_KEY_REGION
+- name: VAULT_STORAGE_BUCKET
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.VAULT_STORAGE_BUCKET

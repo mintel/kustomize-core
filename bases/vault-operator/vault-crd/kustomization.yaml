@@ -9,7 +9,6 @@ commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
 namespace: default
-namePrefix: test-
 
 resources:
 - clusterrolebinding-vault-auth.yaml
@@ -26,13 +25,6 @@ vars:
     apiVersion: v1
   fieldref:
     fieldpath: metadata.name
-- name: SERVICEACCOUNT_NAMESPACE
-  objref:
-    kind: ServiceAccount
-    name: vault
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.namespace
 - name: VAULTCRD_NAMESPACE
   objref:
     kind: Vault

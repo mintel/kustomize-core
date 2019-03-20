@@ -1,0 +1,19 @@
+apiVersion: "vault.banzaicloud.com/v1alpha1"
+kind: "Vault"
+metadata:
+  name: "vault"
+spec:
+  # Describe where you would like to store the Vault unseal keys and root token
+  # in GCS encrypted with KMS.
+  unsealConfig:
+    google:
+      kmsKeyRing: "$(VAULT_KEYRING)"
+      kmsCryptoKey: "$(VAULT_KEYNAME)"
+      kmsLocation: "$(VAULT_KEY_REGION)"
+      kmsProject: "$(VAULT_KEY_PROJECT)"
+      storageBucket: "$(VAULT_STORAGE_BUCKET)"
+  config:
+    storage:
+      gcs:
+        bucket: "$(VAULT_STORAGE_BUCKET)"
+        ha_enabled: "true"
