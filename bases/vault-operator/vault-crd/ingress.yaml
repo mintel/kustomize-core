@@ -1,0 +1,19 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: vault
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+    ingress.kubernetes.io/secure-backends: "true"
+spec:
+  rules:
+  - host: $(VAULTCRD_NAME).$(DOMAIN)
+    http:
+      paths:
+      - backend:
+          serviceName: $(VAULTCRD_NAME)
+          servicePort: 8200
+  tls:
+  - hosts:
+     - $(VAULTCRD_NAME).$(DOMAIN)

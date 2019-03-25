@@ -16,6 +16,7 @@ resources:
 - role-vault-secrets.yaml
 - serviceaccount-vault.yaml
 - vault-crd.yaml
+- ingress.yaml
 
 vars:
 - name: SERVICEACCOUNT_NAME
