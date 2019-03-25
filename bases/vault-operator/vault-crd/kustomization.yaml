@@ -53,6 +53,13 @@ vars:
     name: vault-properties
   fieldref:
     fieldpath: data.BANK_VAULTS_VERSION
+- name: DOMAIN
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-properties
+  fieldref:
+    fieldpath: data.DOMAIN
 
 configMapGenerator:
 - name: vault-properties 

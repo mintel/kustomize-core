@@ -24,3 +24,5 @@ varReference:
   kind: Vault
 - path: spec/config/storage/gcs/bucket
   kind: Vault
+- path: spec/ingress/spec/tls/hosts
+  kind: Vault

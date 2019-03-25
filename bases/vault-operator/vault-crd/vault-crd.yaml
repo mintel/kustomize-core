@@ -13,6 +13,14 @@ spec:
   # Specify the ServiceAccount where the Vault Pod and the Bank-Vaults configurer/unsealer is running
   serviceAccount: $(SERVICEACCOUNT_NAME)
 
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: haproxy
+    spec:
+      tls:
+      - hosts:
+        - $(VAULTCRD_NAME).$(DOMAIN)
+
   # A YAML representation of a final vault config file, this config represents
   # a HA config in Google Cloud.
   # See https://www.vaultproject.io/docs/configuration/ for more information.
