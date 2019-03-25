@@ -1,0 +1,33 @@
+---
+apiVersion: "apps/v1"
+kind: Deployment
+metadata:
+  name: external-dns
+spec:
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      serviceAccountName: external-dns
+      securityContext:
+        runAsUser: 65534
+      containers:
+      - name: external-dns
+        image: bitnami/external-dns:0.5.11
+        args:
+        - --source=service
+        - --domain-filter=$(DOMAIN)
+        - --namespace=ingress
+        - --provider=google
+        - --google-project=$(GOOGLE_PROJECT)
+        - --registry=txt
+        - --txt-owner-id=k8s-$(CLUSTER_NAME)
+        - --policy=sync
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+

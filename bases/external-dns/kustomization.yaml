@@ -1,0 +1,49 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+  app.kubernetes.io/app: external-dns
+  app: external-dns
+
+resources:
+- clusterrolebinding.yaml
+- clusterrole.yaml
+- deployment.yaml
+- sa.yaml
+
+vars:
+- name: DOMAIN
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: externaldns-properties
+  fieldref:
+    fieldpath: data.DOMAIN 
+- name: CLUSTER_NAME
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: externaldns-properties
+  fieldref:
+    fieldpath: data.CLUSTER_NAME
+- name: GOOGLE_PROJECT
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: externaldns-properties
+  fieldref:
+    fieldpath: data.GOOGLE_PROJECT
+
+
+configMapGenerator:
+- name: externaldns-properties 
+  env: properties/cluster.properties
+
+
+images:
+  - name: bitnami/external-dns
+    newTag: 0.5.11
