@@ -19,19 +19,6 @@ resources:
 - clusterrolebinding.yaml
 - deployment.yaml
 
-vars:
-- name: CONTROLLERS
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: cert-manager-properties
-  fieldref:
-    fieldpath: data.CONTROLLERS
-
-configMapGenerator:
-- name: cert-manager-properties 
-  env: properties/cert-manager.properties
-
 images:
   - name: quay.io/jetstack/cert-manager-controller
     newTag: v0.6.2

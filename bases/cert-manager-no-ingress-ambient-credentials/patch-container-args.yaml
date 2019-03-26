@@ -1,0 +1,16 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager
+spec:
+  template:
+    spec:
+      containers:
+      - name: cert-manager
+        args:
+        - --cluster-resource-namespace=$(POD_NAMESPACE)
+        - --controllers=issuers,clusterissuers,certificates,orders,challenges,scheduler
+        - --issuer-ambient-credentials=true
+        - --leader-election-namespace=$(POD_NAMESPACE)
+        - --renew-before-expiry-duration=2592000s
