@@ -1,0 +1,37 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+namespace: cert-manager
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+  app.kubernetes.io/app: cert-manager
+  app: cert-manager
+
+resources:
+- sa.yaml
+- clusterrole-edit.yaml
+- clusterrole-view.yaml
+- clusterrole.yaml
+- clusterrolebinding.yaml
+- deployment.yaml
+
+vars:
+- name: CONTROLLERS
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: cert-manager-properties
+  fieldref:
+    fieldpath: data.CONTROLLERS
+
+configMapGenerator:
+- name: cert-manager-properties 
+  env: properties/cert-manager.properties
+
+images:
+  - name: quay.io/jetstack/cert-manager-controller
+    newTag: v0.6.2

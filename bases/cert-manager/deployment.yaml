@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager
+spec:
+  minReadySeconds: 30
+  replicas: 2
+  revisionHistoryLimit: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: docker/default
+    spec:
+      containers:
+      - args:
+        - --cluster-resource-namespace=$(POD_NAMESPACE)
+        - --controllers=$(CONTROLLERS)
+        - --issuer-ambient-credentials=true
+        - --leader-election-namespace=$(POD_NAMESPACE)
+        - --renew-before-expiry-duration=2592000s
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        image: quay.io/jetstack/cert-manager-controller:v0.6.2
+        name: cert-manager
+        ports:
+        - containerPort: 9402
+          name: metrics
+        resources:
+          limits:
+            cpu: 250m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        stdin: false
+        tty: false
+        volumeMounts: []
+      imagePullSecrets: []
+      securityContext:
+        fsGroup: 101
+        runAsUser: 100
+      serviceAccountName: cert-manager
+      terminationGracePeriodSeconds: 30
+      volumes: []
