@@ -8,7 +8,7 @@ metadata:
     ingress.kubernetes.io/secure-backends: "true"
 spec:
   rules:
-  - host: $(VAULTCRD_NAME).$(DOMAIN)
+  - host: $(VAULTCRD_NAME).svc.$(DOMAIN)
     http:
       paths:
       - backend:
@@ -16,4 +16,4 @@ spec:
           servicePort: 8200
   tls:
   - hosts:
-     - $(VAULTCRD_NAME).$(DOMAIN)
+     - $(VAULTCRD_NAME).svc.$(DOMAIN)
