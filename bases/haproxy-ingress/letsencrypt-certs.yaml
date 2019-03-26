@@ -8,8 +8,8 @@ spec:
     - dns01:
         provider: __PLACEHOLDER_PATCH__
       domains:
-      - '*.$(DOMAIN)'
-  commonName: '*.$(DOMAIN)'
+      - '*.svc.$(DOMAIN)'
+  commonName: '*.svc.$(DOMAIN)'
   issuerRef:
     name: __PLACEHOLDER_PATCH__
   secretName: star-letsencrypt-cert
