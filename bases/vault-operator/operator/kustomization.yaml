@@ -1,0 +1,22 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+  app.kubernetes.io/app: vault-operator
+  app: vault-operator
+
+namespace: vault
+
+resources:
+- clusterrole.yaml
+- clusterrolebinding.yaml
+- sa.yaml
+- deployment.yaml
+
+images:
+  - name: banzaicloud/vault-operator
+    newTag: 0.4.14

@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-operator
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      serviceAccountName: vault-operator
+      containers:
+        - name: vault-operator
+          image: banzaicloud/vault-operator:0.4.14
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9091
+              name: metrics
+          command:
+            - vault-operator
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 1
+          env:
+            - name: WATCH_NAMESPACE
+              value: "vault"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "vault-operator"
