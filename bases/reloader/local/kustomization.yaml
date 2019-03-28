@@ -1,0 +1,19 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+namespace: default
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+  app.kubernetes.io/app: reloader
+  app: reloader
+
+bases:
+  - ../common
+
+resources:
+  - role.yaml
+  - rolebinding.yaml

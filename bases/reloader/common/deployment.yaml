@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reloader
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    spec:
+      serviceAccountName: reloader
+      containers:
+        - image: "stakater/reloader:v0.0.26"
+          imagePullPolicy: IfNotPresent
+          name: reloader
+          resources:
+            requests:
+              cpu: "25m"
+              memory: "25Mi"
+            limits:
+              cpu: "100m"
+              memory: "150Mi"
