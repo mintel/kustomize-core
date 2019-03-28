@@ -8,6 +8,10 @@ configurations:
 commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
+commonLabels:
+  app.kubernetes.io/app: haproxy
+  app: haproxy
+
 resources:
 - letsencrypt-certs.yaml
 - default-backend-deployment.yaml

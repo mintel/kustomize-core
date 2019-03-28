@@ -8,6 +8,10 @@ configurations:
 commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
+commonLabels:
+  app.kubernetes.io/app: vault
+  app: vault
+
 namespace: default
 
 resources:
