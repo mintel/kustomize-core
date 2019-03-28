@@ -6,6 +6,10 @@ varReference:
   kind: Vault
 - path: spec/config/api_addr
   kind: Vault
+- path: spec/config/cluster_name
+  kind: Vault
+- path: spec/volumes/secret/secretName
+  kind: Vault
 - path: spec/image
   kind: Vault
 - path: spec/bankVaultsImage
@@ -26,3 +30,9 @@ varReference:
   kind: Vault
 - path: spec/rules/http/paths/backend/serviceName
   kind: Ingress
+- path: spec/acme/config/domains
+  kind: Certificate
+- path: spec/commonName
+  kind: Certificate
+- path: spec/secretName
+  kind: Certificate

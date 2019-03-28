@@ -15,8 +15,9 @@ resources:
 - rolebinding-vault-secrets.yaml
 - role-vault-secrets.yaml
 - serviceaccount-vault.yaml
-- vault-crd.yaml
+- letsencrypt-certs.yaml
 - ingress.yaml
+- vault-crd.yaml
 
 vars:
 - name: SERVICEACCOUNT_NAME

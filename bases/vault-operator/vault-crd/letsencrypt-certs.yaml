@@ -1,0 +1,16 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: vault-letsencrypt-cert
+spec:
+  acme:
+    config:
+    - dns01:
+        provider: __PLACEHOLDER_PATCH__
+      domains:
+      - '$(VAULTCRD_NAME).svc.$(DOMAIN)'
+  commonName: '$(VAULTCRD_NAME).svc.$(DOMAIN)'
+  issuerRef:
+    name: __PLACEHOLDER_PATCH__
+  secretName: $(VAULTCRD_NAME)-letsencrypt-cert
+
