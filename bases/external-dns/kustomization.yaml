@@ -12,8 +12,8 @@ commonLabels:
 resources:
 - clusterrolebinding.yaml
 - clusterrole.yaml
-- deployment.yaml
 - sa.yaml
+- deployment.yaml
 
 vars:
 - name: DOMAIN
