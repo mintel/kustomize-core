@@ -17,3 +17,6 @@ bases:
 resources:
   - role.yaml
   - rolebinding.yaml
+
+patchesStrategicMerge:
+  - patch-deployment-local.yaml
