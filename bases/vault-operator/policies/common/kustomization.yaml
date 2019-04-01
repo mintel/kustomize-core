@@ -6,7 +6,8 @@ commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
 resources:
-- test-config.yaml
+- kubernetes-base-policies.yaml
+- kubernetes-local-auth-config.yaml
 
 
 vars:

@@ -1,23 +1,19 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  annotations:
+    mintel.com/skip-ci: true
   labels:
     app: vault-configurator
     vault_cr: $(VAULT_CR_LABEL)
-  name: common-config
+  name: kubernetes-local-auth-config
 data:
   vault-config.yml: |
-    policies:
-      - name: allow_secrets
-        rules: path "secret/*" {
-          capabilities = ["create", "read", "update", "delete", "list"]
-          }
     auth:
       - type: kubernetes
         roles:
-          # Allow every pod in the default namespace to use the secret kv store
           - name: default
             bound_service_account_names: default
             bound_service_account_namespaces: default
-            policies: allow_secrets
             ttl: 1h
