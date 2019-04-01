@@ -2,22 +2,5 @@
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 
-resources:
-- dev-config.yaml
-
 bases:
 - ../common/
-
-#vars:
-#- name: VAULT_CR_LABEL
-#  objref:
-#    apiVersion: v1
-#    kind: ConfigMap
-#    name: vault-policies-properties
-#  fieldref:
-#    fieldpath: data.VAULT_CR_LABEL
-#
-#configMapGenerator:
-#- name: vault-policies-properties 
-#  env: properties/policies.properties
-#
