@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-log-kibana
+  labels:
+    kubernetes.io/cluster-service: "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      volumes:
+      - name: config-volume
+        configMap:
+          name: elasticsearch-log-kibana-config-v0.1.0.0
+      priorityClassName: infra
+      containers:
+      - name: kibana
+        imagePullPolicy: Always
+        image: mintel/kibana-oss:6.6.0-1
+        resources:
+          # need more cpu upon initialization, therefore burstable class
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 256Mi
+        env:
+          - name: SERVER_HOST
+            value: 0.0.0.0
+          - name: ELASTICSEARCH_URL
+            value: http://elasticsearch-log:9200
+          - name: CLUSTER_NAME
+            value: logs
+        ports:
+        - containerPort: 5601
+          name: ui
+          protocol: TCP
+        volumeMounts:
+        - name: config-volume
+          subPath: setup-kibana.sh
+          mountPath: /opt/setup-kibana.sh
+      - name: auth-proxy
+        image: quay.io/gambol99/keycloak-proxy:v2.2.0
+        ports:
+        - containerPort: 6001
+          name: auth-proxy
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        args:
+          - --verbose=true
+          - --listen=:6001
+          - --upstream-url=http://127.0.0.1:5601
+          - --discovery-url=https://dex.svc.gke1.k8s-dev.mintel.com/.well-known/openid-configuration
+          - --client-id=kibana
+          - --skip-upstream-tls-verify
+          - --redirection-url=https://kibana.svc.$(DOMAIN)
+          - --secure-cookie=false
+          - --client-secret=kibana
+          - --enable-authorization-header
+          - --skip-openid-provider-tls-verify
+          - --add-claims=groups
+          - --scopes=groups
+          - --add-claims=groups
+          - --resources=uri=/*

@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+    mintel.com/dex-k8s-ingress-watcher-client-id: kibana
+    mintel.com/dex-k8s-ingress-watcher-secret: kibana
+    mintel.com/dex-k8s-ingress-watcher-redirect-uri: https://kibana.svc.gke1.k8s-dev.mintel.com/oauth/callback
+  name: kibana
+spec:
+  rules:
+  - host: kibana.svc.gke1.k8s-dev.mintel.com
+    http:
+      paths:
+      - backend:
+          serviceName: elasticsearch-log-kibana
+          servicePort: 6001
+        path: /
+  tls:
+  - hosts:
+      - kibana.svc.gke1.k8s-dev.mintel.com

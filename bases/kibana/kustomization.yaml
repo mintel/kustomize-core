@@ -1,0 +1,38 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+namespace: monitoring
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+#  app.kubernetes.io/app: kibana
+#  app: kibana
+  k8s-app: elasticsearch-log-kibana
+
+resources:
+- kibana-deployment.yml
+- kibana-ingress.yml
+- kibana-svc.yml
+
+vars:
+- name: DOMAIN
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: externaldns-properties
+  fieldref:
+    fieldpath: data.DOMAIN
+
+configMapGenerator:
+- name: elasticsearch-log-kibana-config
+  files:
+  - files/setup-kibana.sh
+
+images:
+  - name: mintel/kibana-oss
+    newTag: 6.6.0-1
+  - name: quay.io/gambol99/keycloak-proxy
+    newTag: v2.2.0
