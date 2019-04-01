@@ -9,9 +9,9 @@ commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
 resources:
-- kubernetes-base-policies.yaml # All Common base policies
-- kubernetes-base-auth.yaml # All Common auth configurations
-- kubernetes-gcp-secret-backend.yaml # GCP Secret Backend
+- base-policies.yaml # All Common base policies
+- base-auth.yaml # All Common auth configurations
+- gcp-secret-backend.yaml # GCP Secret Backend
 
 vars:
 - name: VAULT_CR_LABEL

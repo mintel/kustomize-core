@@ -5,7 +5,7 @@ metadata:
   labels:
     app: vault-configurator
     vault_cr: $(VAULT_CR_LABEL)
-  name: kubernetes-base-policies
+  name: vault-base-policies
 data:
   vault-config.yml: |
     policies:

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: vault-configurator
     vault_cr: $(VAULT_CR_LABEL)
-  name: kubernetes-base-auth
+  name: vault-base-auth
 data:
   vault-config.yml: |
     auth:
@@ -17,7 +17,7 @@ data:
           policies: terraform_provisioner
           bind_secret_id: "true"
           secret_id_ttl: 10m
-          token_num_uses: 10
+          token_num_uses: 3
           token_ttl: 30m
           token_max_ttl: 60m
           secret_id_num_uses: 0
