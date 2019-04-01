@@ -1,0 +1,6 @@
+---
+
+varReference:
+- path: data
+  kind: ConfigMap
+

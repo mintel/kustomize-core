@@ -2,13 +2,16 @@
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 
+configurations:
+- varreference.yaml
+
 commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
 resources:
-- kubernetes-base-policies.yaml
-- kubernetes-local-auth-config.yaml
-
+- kubernetes-base-policies.yaml # All Common base policies
+- kubernetes-base-auth.yaml # All Common auth configurations
+- kubernetes-gcp-secret-backend.yaml # GCP Secret Backend
 
 vars:
 - name: VAULT_CR_LABEL
@@ -18,6 +21,13 @@ vars:
     name: vault-policies-properties
   fieldref:
     fieldpath: data.VAULT_CR_LABEL
+- name: GOOGLE_PROJECT
+  objref:
+    apiVersion: v1
+    kind: ConfigMap
+    name: vault-policies-properties
+  fieldref:
+    fieldpath: data.GOOGLE_PROJECT
 
 configMapGenerator:
 - name: vault-policies-properties 
