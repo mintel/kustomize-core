@@ -12,8 +12,8 @@ data:
       - type: jwt
         path: jwt
         config:
-          oidc_discovery_url: https://dex.svc.dev1.k8s-dev.mintel.com/
-          bound_issuer: https://dex.svc.dev1.k8s-dev.mintel.com/
+          oidc_discovery_url: https://dex.svc.dev1.k8s-dev.mintel.com
+          bound_issuer: https://dex.svc.dev1.k8s-dev.mintel.com
           default_role: default
         roles:
           - name: admin

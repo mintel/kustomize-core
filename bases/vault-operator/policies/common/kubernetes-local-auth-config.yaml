@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   annotations:
-    mintel.com/skip-ci: true
+    mintel.com/skip-local-ci: true
   labels:
     app: vault-configurator
     vault_cr: $(VAULT_CR_LABEL)
