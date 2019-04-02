@@ -71,7 +71,7 @@ spec:
           - --discovery-url=https://dex.svc.gke1.k8s-dev.mintel.com/.well-known/openid-configuration
           - --client-id=kibana
           - --skip-upstream-tls-verify
-          - --redirection-url=https://kibana.svc.$(DOMAIN)
+          - --redirection-url=https://kibana.svc.gke1.k8s-dev.mintel.com
           - --secure-cookie=false
           - --client-secret=kibana
           - --enable-authorization-header

@@ -8,23 +8,13 @@ commonAnnotations:
   app.kubernetes.io/managed-by: kustomize
 
 commonLabels:
-#  app.kubernetes.io/app: kibana
-#  app: kibana
-  k8s-app: elasticsearch-log-kibana
+  app.kubernetes.io/app: kibana
+  app: kibana
 
 resources:
 - kibana-deployment.yml
 - kibana-ingress.yml
 - kibana-svc.yml
-
-vars:
-- name: DOMAIN
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: externaldns-properties
-  fieldref:
-    fieldpath: data.DOMAIN
 
 configMapGenerator:
 - name: elasticsearch-log-kibana-config
