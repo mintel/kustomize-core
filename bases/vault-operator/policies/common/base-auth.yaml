@@ -21,11 +21,3 @@ data:
           token_ttl: 30m
           token_max_ttl: 60m
           secret_id_num_uses: 0
-        - name: terraform-provisioner2
-          policies: terraform_provisioner
-          bind_secret_id: "true"
-          secret_id_ttl: 10m
-          token_num_uses: 3
-          token_ttl: 30m
-          token_max_ttl: 60m
-          secret_id_num_uses: 0
