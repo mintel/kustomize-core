@@ -1,0 +1,38 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: elasticsearch-log-curator
+spec:
+  schedule: 57 */4 * * *
+  jobTemplate:
+    metadata:
+      labels:
+        tier: logging-plane
+    spec:
+      template:
+        metadata:
+          labels:
+            tier: logging-plane
+        spec:
+          containers:
+          - name: curator
+            image: quay.io/pires/docker-elasticsearch-curator:5.5.1
+            args:
+            - --config
+            - /etc/config/config.yml
+            - /etc/config/action_file.yml
+            volumeMounts:
+              - name: config-volume
+                mountPath: /etc/config
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                cpu: 50m
+                memory: 128Mi
+          volumes:
+            - name: config-volume
+              configMap:
+                name: elasticsearch-log-curator-config
+          restartPolicy: OnFailure
