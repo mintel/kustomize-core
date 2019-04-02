@@ -1,0 +1,24 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+namespace: monitoring
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+  app.kubernetes.io/app: elasticsearch-log-elastalert
+  app: elasticsearch-log-elastalert
+
+resources:
+- deployment.yaml
+
+configMapGenerator:
+- name: efk-elastalert
+  files:
+  - files/config.yaml
+
+images:
+- name: quay.io/pires/docker-elasticsearch-curator
+  newTag: 5.5.1
