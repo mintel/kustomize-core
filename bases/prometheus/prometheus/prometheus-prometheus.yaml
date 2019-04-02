@@ -32,17 +32,29 @@ spec:
     beta.kubernetes.io/os: linux
   replicas: 2
   resources:
+    limits:
+      cpu: 1500m
+      memory: 6Gi
     requests:
-      memory: 400Mi
+      cpu: 350m
+      memory: 3Gi
+  retention: 168h
   ruleSelector:
     matchLabels:
       prometheus: k8s
       role: alert-rules
   securityContext:
-    fsGroup: 2000
+    fsGroup: 65534
     runAsNonRoot: true
-    runAsUser: 1000
+    runAsUser: 65534
+  serviceMonitorSelector:
+    matchExpressions:
+    - key: k8s-app
+      operator: Exists
   serviceAccountName: prometheus-k8s
   serviceMonitorNamespaceSelector: {}
-  serviceMonitorSelector: {}
-  version: v2.5.0
+  serviceMonitorSelector:
+    matchExpressions:
+    - key: k8s-app
+      operator: Exists
+  version: v2.8.1
