@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ./resources/prometheus-clusterRole.yaml
+- ./resources/prometheus-clusterRoleBinding.yaml
+- ./resources/prometheus-prometheus.yaml
+- ./resources/prometheus-roleBindingConfig.yaml
+- ./resources/prometheus-roleBindingSpecificNamespaces.yaml
+- ./resources/prometheus-roleConfig.yaml
+- ./resources/prometheus-roleSpecificNamespaces.yaml
+- ./resources/prometheus-service.yaml
+- ./resources/prometheus-serviceAccount.yaml
+- ./resources/prometheus-serviceMonitor.yaml
+- ./resources/prometheus-serviceMonitorApiserver.yaml
+- ./resources/prometheus-serviceMonitorCoreDNS.yaml
+- ./resources/prometheus-serviceMonitorKubeControllerManager.yaml
+- ./resources/prometheus-serviceMonitorKubeScheduler.yaml
+- ./resources/prometheus-serviceMonitorKubelet.yaml
