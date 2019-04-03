@@ -22,7 +22,7 @@ data:
               - dev1
             user_claim: email
             groups_claim: "groups"
-            policies: admin_access
+            policies: ""
             ttl: 10m
             max_ttl: 60m
             num_uses: 3
