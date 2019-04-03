@@ -1,0 +1,21 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+namespace: monitoring
+
+commonAnnotations:
+  app.kubernetes.io/managed-by: kustomize
+
+commonLabels:
+  app.kubernetes.io/app: elasticsearch-log-exporter
+  app: elasticsearch-log-exporter
+
+resources:
+- es-exporter-deployment.yml
+- es-exporter-service.yml
+- es-exporter-service-monitor.yml
+
+images:
+- name: justwatch/elasticsearch_exporter
+  newTag: 1.0.2

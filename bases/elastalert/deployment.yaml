@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-log-elastalert
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: logging-plane
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        tier: logging-plane
+    spec:
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 65534
+        fsGroup: 65534
+      ### TERM not working, kill straight away
+      terminationGracePeriodSeconds: 0
+      priorityClassName: infra
+      containers:
+        - name: git-sync
+          image: gcr.io/google-containers/git-sync:v2.0.6
+          env:
+            - name: HOME
+              value: /tmp
+          resources:
+            requests:
+              cpu: 10m
+              memory: 10Mi
+            limits:
+              cpu: 50m
+              memory: 50Mi
+          volumeMounts:
+            - name: git-rules
+              mountPath: /git
+        - name: esalert
+          image: mintel/elastalert:0.1.38-0
+          imagePullPolicy: Always
+          env:
+            - name: SET_CONTAINER_TIMEZONE
+              value: "False"
+            - name: ELASTICSEARCH_HOST
+              value: elasticsearch-log.monitoring.svc.cluster.local
+          volumeMounts:
+            - name: config
+              mountPath: /opt/config
+            - name: rulescommon
+              mountPath: /opt/rules-common
+            - name: git-rules
+              mountPath: /opt/rules
+          resources:
+            requests:
+              cpu: 50m
+              memory: 100Mi
+            limits:
+              cpu: 150m
+              memory: 250Mi
+      volumes:
+        - name: git-rules
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: efk-elastalert
+        - name: rulescommon
+          configMap:
+            name: efk-elastalert-rules-common
