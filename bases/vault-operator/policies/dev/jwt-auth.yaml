@@ -26,3 +26,13 @@ data:
             ttl: 10m
             max_ttl: 60m
             num_uses: 3
+          - name: mintel
+            role_type: jwt
+            bound_audiences:
+              - dev1
+            user_claim: email
+            groups_claim: "groups"
+            policies: ""
+            ttl: 10m
+            max_ttl: 60m
+            num_uses: 3
