@@ -21,10 +21,8 @@ data:
             bound_audiences:
               - dev1
             user_claim: email
-            groups_claim: ""
+            groups_claim: "groups"
             policies: admin_access
             ttl: 10m
             max_ttl: 60m
-            bound_claims:
-              groups: k8s-admin
             num_uses: 3
