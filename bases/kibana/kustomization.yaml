@@ -19,7 +19,7 @@ resources:
 configMapGenerator:
 - name: elasticsearch-log-kibana-config
   files:
-  - files/setup-kibana.sh
+  - configmaps/elasticsearch-log-kibana-config/setup-kibana.sh
 
 images:
   - name: mintel/kibana-oss

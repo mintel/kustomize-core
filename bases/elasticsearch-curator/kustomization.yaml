@@ -17,8 +17,8 @@ resources:
 configMapGenerator:
 - name: elasticsearch-log-curator-config
   files:
-  - files/action_file.yml
-  - files/config.yml
+  - configmaps/elasticsearch-log-curator-config/action_file.yml
+  - configmaps/elasticsearch-log-curator-config/config.yml
 
 images:
 - name: quay.io/pires/docker-elasticsearch-curator

@@ -17,7 +17,11 @@ resources:
 configMapGenerator:
 - name: efk-elastalert
   files:
-  - files/config.yaml
+  - configmaps/config.yaml
+- name: efk-elastalert-rules-common
+  files:
+  - configmaps/efk-elastalert-rules-common/common
+  - configmaps/efk-elastalert-rules-common/opsgenie
 
 secretGenerator:
 - name: elastalert-git-sync

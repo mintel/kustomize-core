@@ -1,0 +1,2 @@
+es_host: elasticsearch-log.monitoring.svc.cluster.local
+es_port: 9200
